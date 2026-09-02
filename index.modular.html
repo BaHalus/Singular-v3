@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Singular v3</title>
+  <link rel="stylesheet" href="./core/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">HTML standalone modular</p>
+        <h1>Singular v3</h1>
+        <p class="subtitle">Editor interativo de personagens GURPS com módulos dinâmicos.</p>
+      </div>
+      <div class="toolbar">
+        <button id="new-character-btn" type="button">Novo personagem</button>
+        <button id="import-gcs-btn" type="button">Importar .gcs</button>
+        <button id="export-gcs-btn" type="button">Exportar .gcs</button>
+        <input id="gcs-file-input" type="file" accept=".gcs,.json" hidden>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>Ficha</h2>
+          <label class="field">
+            <span>Nome</span>
+            <input id="meta-name" type="text" placeholder="Nome do personagem">
+          </label>
+          <label class="field">
+            <span>Jogador</span>
+            <input id="meta-player" type="text" placeholder="@jogador">
+          </label>
+          <label class="field">
+            <span>Campanha</span>
+            <input id="meta-campaign" type="text" placeholder="Mundo / mesa">
+          </label>
+          <label class="field">
+            <span>Notas</span>
+            <textarea id="meta-notes" rows="5" placeholder="Resumo do conceito, contatos, observações..."></textarea>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>Módulos</h2>
+            <button id="reload-modules-btn" type="button" class="ghost">Recarregar</button>
+          </div>
+          <div id="module-list" class="module-list"></div>
+          <div class="custom-module-box">
+            <label class="field">
+              <span>Registrar módulo local</span>
+              <input id="custom-module-path" type="text" placeholder="./modules/exemplo.module.js">
+            </label>
+            <button id="register-module-btn" type="button" class="ghost">Registrar módulo</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Resumo rápido</h2>
+          <div id="quick-summary" class="quick-summary"></div>
+        </section>
+      </aside>
+
+      <main class="content">
+        <div id="status-banner" class="status-banner" hidden></div>
+        <div id="module-host" class="module-host"></div>
+      </main>
+    </div>
+  </div>
+
+  <div id="floating-root"></div>
+
+  <template id="module-card-template">
+    <section class="module-card">
+      <div class="module-card__body"></div>
+    </section>
+  </template>
+
+  <script>
+    const bootstrapScript = document.createElement('script');
+    if (window.location.protocol === 'file:') {
+      bootstrapScript.src = './scripts/standalone.js';
+    } else {
+      bootstrapScript.type = 'module';
+      bootstrapScript.src = './scripts/bootstrap.js';
+    }
+    document.body.appendChild(bootstrapScript);
+  </script>
+</body>
+</html>
