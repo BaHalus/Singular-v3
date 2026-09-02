@@ -5,7 +5,9 @@ export function createModuleLoader({ host, floatingRoot, registry, contextFactor
   const getDescriptor = (id) => knownRegistry.find((entry) => entry.id === id);
 
   async function importDescriptor(descriptor) {
-    const imported = await import(new URL(descriptor.path, window.location.href).href);
+    const imported = descriptor.module
+      ? descriptor.module
+      : await import(new URL(descriptor.path, window.location.href).href);
     const moduleApi = imported.default ?? imported;
     return {
       ...descriptor,

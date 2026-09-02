@@ -14,6 +14,8 @@ Protótipo de ficha GURPS em HTML standalone modular.
 
 Abra `/home/runner/work/Singular-v3/Singular-v3/index.html` no navegador.
 
+Se você abrir o arquivo direto via `file://`, a página usa automaticamente o bootstrap standalone em `scripts/standalone.js` para carregar os módulos incorporados sem depender de imports ES externos. Em servidor HTTP, o fluxo modular original continua ativo.
+
 Recursos incluídos:
 
 - editor de atributos, traços, perícias, magias e equipamentos;

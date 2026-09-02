@@ -80,6 +80,15 @@
     </section>
   </template>
 
-  <script type="module" src="./scripts/bootstrap.js"></script>
+  <script>
+    const bootstrapScript = document.createElement('script');
+    if (window.location.protocol === 'file:') {
+      bootstrapScript.src = './scripts/standalone.js';
+    } else {
+      bootstrapScript.type = 'module';
+      bootstrapScript.src = './scripts/bootstrap.js';
+    }
+    document.body.appendChild(bootstrapScript);
+  </script>
 </body>
 </html>
