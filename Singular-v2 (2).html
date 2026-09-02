@@ -191,9 +191,16 @@ const _DM = {
     function fireOndblclick(handle, evt) {
         let el = handle;
         while (el) {
-            if (typeof el.ondblclick === 'function') { el.ondblclick(evt); return; }
-            const attr = el.getAttribute && el.getAttribute('ondblclick');
-            if (attr) { try { new Function('event', attr).call(el, evt); } catch(x){} return; }
+            if (typeof el.ondblclick === 'function' || (el.getAttribute && el.getAttribute('ondblclick'))) {
+                el.dispatchEvent(new MouseEvent('dblclick', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    clientX: evt?.clientX || 0,
+                    clientY: evt?.clientY || 0
+                }));
+                return;
+            }
             if (!el.parentElement) break;
             // Para no container mais próximo
             if (el.classList.contains('pkg-card') || el.classList.contains('item-list-row') ||
@@ -240,7 +247,7 @@ const _DM = {
     // Suprime o evento nativo dblclick nas alças para evitar dupla execução
     // (nosso contador de cliques já disparou o ondblclick no 2° click)
     document.addEventListener('dblclick', ev => {
-        if (ev.target && ev.target.closest && ev.target.closest('.handle')) {
+        if (ev.isTrusted && ev.target && ev.target.closest && ev.target.closest('.handle')) {
             ev.stopImmediatePropagation();
             ev.preventDefault();
         }
@@ -341,13 +348,7 @@ function _fixEqpWeights(arr) {
 </script>
 
     <style>
-        /* Fonte para dislexia — carrega com internet, degrada para sans-serif offline */
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
-        @font-face {
-            font-family: 'OpenDyslexic';
-            src: url('https://cdn.jsdelivr.net/npm/opendyslexic@0.91.12/fonts/OpenDyslexic-Regular.woff2') format('woff2');
-            font-weight: normal; font-style: normal; font-display: swap;
-        }
+        /* Fonte para dislexia — usa apenas fontes locais para manter o modo offline */
 
         /* ===== TEMAS ===== */
         :root, [data-theme="dark"] {
@@ -1264,10 +1265,10 @@ function _fixEqpWeights(arr) {
 
         <hr class="mdiv">
         <div class="modal-label">Importar personagem</div>
-        <button class="mbtn full" onclick="document.getElementById('import-file').click()">📂 Abrir arquivo GCS/TXT</button>
+        <button class="mbtn full" onclick="document.getElementById('import-file').click()">📂 Abrir JSON/TXT compatível</button>
         <input type="file" id="import-file" accept=".gcs,.txt,.json" style="display:none" onchange="importFromFile(event)">
-        <div class="modal-label" style="margin-top:8px;">Ou cole o código JSON aqui:</div>
-        <textarea class="modal-textarea" id="import-textarea" placeholder="Cole o JSON aqui..." oninput="event.stopPropagation()" rows="4"></textarea>
+        <div class="modal-label" style="margin-top:8px;">Ou cole o JSON exportado pela ficha:</div>
+        <textarea class="modal-textarea" id="import-textarea" placeholder="Cole aqui o JSON do personagem..." oninput="event.stopPropagation()" rows="4"></textarea>
         <button class="mbtn full" style="margin-top:7px;" onclick="importFromText()">✅ Importar do texto</button>
         <div class="feedback" id="import-fb"></div>
 
@@ -1335,7 +1336,7 @@ function _fixEqpWeights(arr) {
 
             <h2 style="display:flex;align-items:center;gap:8px;">🎨 Temas <button onclick="toggleTheme()" style="font-size:0.65rem;padding:3px 10px;cursor:pointer;border:1px solid var(--border);background:var(--btn-bg);color:var(--text);border-radius:4px;font-family:inherit;">mudar ↺</button></h2>
             <p><strong>Toque</strong> para ciclar; <strong>segure</strong> para escolher direto. Preferência salva entre sessões. Visuais: 🌙 Escuro · ☀️ Claro · 📜 Retro · 🚀 Espacial.</p>
-            <p><strong>Acessibilidade:</strong> 🔤 <strong>Dislexia</strong> — OpenDyslexic, espaçamento ampliado, fundo creme (requer internet na 1ª carga). &nbsp;🟠 <strong>Daltonismo V-V</strong> — azul-âmbar (Deuteranopia/Protanopia). &nbsp;🟣 <strong>Daltonismo A-A</strong> — magenta × verde-água (Tritanopia). &nbsp;⬜ <strong>Monocromático</strong> — contraste puro; negativos com sublinhado pontilhado (Acromasia).</p>
+            <p><strong>Acessibilidade:</strong> 🔤 <strong>Dislexia</strong> — fontes locais de alta legibilidade, espaçamento ampliado e fundo creme, funcionando offline. &nbsp;🟠 <strong>Daltonismo V-V</strong> — azul-âmbar (Deuteranopia/Protanopia). &nbsp;🟣 <strong>Daltonismo A-A</strong> — magenta × verde-água (Tritanopia). &nbsp;⬜ <strong>Monocromático</strong> — contraste puro; negativos com sublinhado pontilhado (Acromasia).</p>
 
             <h2>✏️ Editando</h2>
             <p><strong>Atributos</strong> (ST, DX, IQ, HT): botões <code>–</code> / <code>+</code>, custo em tempo real. Desconto de MT (−10%/nível em ST e PV) e de Manuseadores Precários / Sem Manuseadores (−40% em ST e DX) aplicados automaticamente, arredondados para cima. <strong>MT e NT</strong>: toque no valor e edite. NT filtra biblioteca de armas e itens.</p>
@@ -5112,6 +5113,74 @@ function syncPVPanel(type) {
     updateAll();
 }
 
+const _STATE_SCHEMA_VERSION = 3;
+const _STATE_EX_DEFAULTS = { hp:0, fp:0, will:0, per:0, speed:0, move:0, esq_amp:0, bl_bonus:0, bd:0, str_strike:0, fear:0, vis:0, aud:0, olf:0, tat:0 };
+const _VALID_MAIN_TABS = ['principal', 'tracos', 'pericias', 'equipamentos', 'poderes'];
+const _VALID_PRINCIPAL_SUBTABS = ['atributos', 'social', 'combate', 'proezas'];
+
+function _defaultStateHTML() {
+    return window._initialSHTML || document.getElementById('section-container')?.innerHTML || '';
+}
+
+function _defaultSocialState() {
+    return Array.from(document.querySelectorAll('.social-line b')).map(b => b.innerText);
+}
+
+function normalizeStateSnapshot(state, { requireHtml = false } = {}) {
+    if (!state || typeof state !== 'object') throw new Error('Dados inválidos ou incompletos.');
+
+    const normalized = {
+        v: Number.isFinite(Number(state.v)) ? Number(state.v) : 2,
+        schemaVersion: _STATE_SCHEMA_VERSION,
+        ex: Object.assign({}, _STATE_EX_DEFAULTS, state.ex || {}),
+        charName: String(state.charName || 'Personagem'),
+        social: Array.isArray(state.social) ? state.social.map(v => String(v ?? '')) : _defaultSocialState(),
+        sHTML: typeof state.sHTML === 'string' && state.sHTML.trim() ? state.sHTML : _defaultStateHTML(),
+        unspent: String(state.unspent ?? '0'),
+        pts: String(state.pts ?? '0'),
+        portrait: typeof state.portrait === 'string' && state.portrait ? state.portrait : null,
+        packages: Array.isArray(state.packages) ? state.packages : [],
+        fgMembership: state.fgMembership && typeof state.fgMembership === 'object' ? state.fgMembership : {},
+        baseFormId: state.baseFormId ?? null,
+        activeFormPkgId: state.activeFormPkgId ?? null,
+        sheetMode: state.sheetMode === 'mesa' ? 'mesa' : 'criacao',
+        mainTab: _VALID_MAIN_TABS.includes(state.mainTab) ? state.mainTab : 'principal',
+        principalSubtab: _VALID_PRINCIPAL_SUBTABS.includes(state.principalSubtab) ? state.principalSubtab : 'atributos',
+        savedAt: typeof state.savedAt === 'string' ? state.savedAt : new Date().toISOString()
+    };
+
+    if (requireHtml && !normalized.sHTML) throw new Error('Dados inválidos ou incompletos.');
+    return normalized;
+}
+
+function _extractJsonText(text) {
+    const clean = String(text || '')
+        .replace(/^\uFEFF/, '')
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```$/, '')
+        .trim();
+
+    const candidates = [clean];
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    if (start !== -1 && end > start) candidates.push(clean.slice(start, end + 1));
+
+    for (const candidate of candidates) {
+        if (!candidate) continue;
+        try {
+            return JSON.parse(candidate);
+        } catch (e) {}
+    }
+
+    throw new Error('Formato incompatível. Importe um JSON exportado pela ficha.');
+}
+
+function parseImportedState(text) {
+    const parsed = _extractJsonText(text);
+    const payload = parsed && typeof parsed.state === 'object' ? parsed.state : parsed;
+    return normalizeStateSnapshot(payload, { requireHtml: true });
+}
+
 function quickSaveCharacter() {
     try {
         localStorage.setItem('gurps-quick-char', JSON.stringify(getState()));
@@ -5124,7 +5193,7 @@ function quickLoadCharacter() {
     try {
         const raw = localStorage.getItem('gurps-quick-char');
         if (!raw) { setConfigFeedback('err', '⚠️ Nenhum salvamento local encontrado.'); return; }
-        const st = JSON.parse(raw);
+        const st = normalizeStateSnapshot(JSON.parse(raw), { requireHtml: true });
         applyState(st);
         setConfigFeedback('ok', '✅ Personagem carregado.');
     } catch(e) {
