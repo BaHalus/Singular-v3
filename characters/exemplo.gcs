@@ -1,0 +1,83 @@
+{
+  "type": "SingularV3Character",
+  "character": {
+    "meta": {
+      "name": "Arandor",
+      "player": "Jogador Exemplo",
+      "campaign": "Reinos Fragmentados",
+      "notes": "Mago-mercador com talento social e magia utilitária.",
+      "techLevel": "3"
+    },
+    "points": {
+      "budget": 175
+    },
+    "attributes": {
+      "st": 9,
+      "dx": 11,
+      "iq": 13,
+      "ht": 10,
+      "hp": 9,
+      "fp": 11,
+      "will": 13,
+      "per": 12,
+      "speed": 5.25,
+      "move": 5
+    },
+    "resources": {
+      "hpCurrent": 9,
+      "fpCurrent": 11
+    },
+    "traits": [
+      {
+        "name": "Aptidão Mágica",
+        "type": "advantage",
+        "cost": 10,
+        "level": 2,
+        "modifiers": [
+          { "target": "spell.all", "amount": 2 }
+        ]
+      },
+      {
+        "name": "Curioso",
+        "type": "disadvantage",
+        "cost": 5,
+        "level": 1,
+        "modifiers": []
+      }
+    ],
+    "skills": [
+      {
+        "name": "Diplomacia",
+        "attribute": "IQ",
+        "difficulty": "H",
+        "points": 4,
+        "bonus": 1
+      }
+    ],
+    "spells": [
+      {
+        "name": "Luz",
+        "college": "Luz e Trevas",
+        "attribute": "IQ",
+        "difficulty": "H",
+        "points": 2
+      }
+    ],
+    "equipment": [
+      {
+        "name": "Bastão",
+        "qty": 1,
+        "weight": 1.5,
+        "cost": 10,
+        "carried": true
+      },
+      {
+        "name": "Livro de feitiços",
+        "qty": 1,
+        "weight": 2,
+        "cost": 120,
+        "carried": true
+      }
+    ]
+  }
+}
