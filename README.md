@@ -12,9 +12,12 @@ Protótipo de ficha GURPS em HTML standalone modular.
 
 ## Como usar
 
-Abra `/home/runner/work/Singular-v3/Singular-v3/index.html` no navegador.
+- Versão modular: abra `/home/runner/work/Singular-v3/Singular-v3/index.html`
+- Versão 100% única: abra `/home/runner/work/Singular-v3/Singular-v3/Singular-v3.html`
 
-Se você abrir o arquivo direto via `file://`, a página usa automaticamente o bootstrap standalone em `scripts/standalone.js` para carregar os módulos incorporados sem depender de imports ES externos. Em servidor HTTP, o fluxo modular original continua ativo.
+Se você abrir `index.html` direto via `file://`, a página usa automaticamente o bootstrap standalone em `scripts/standalone.js` para carregar os módulos incorporados sem depender de imports ES externos. Em servidor HTTP, o fluxo modular original continua ativo.
+
+`Singular-v3.html` já embute HTML, CSS e JavaScript em um único arquivo, sem dependências externas.
 
 Recursos incluídos:
 
