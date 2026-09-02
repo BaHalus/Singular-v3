@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Singular v3</title>
   <style>
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #10141f;
-  --surface: #182032;
-  --surface-alt: #1f2940;
-  --surface-soft: #27324d;
-  --text: #eef3ff;
-  --muted: #9dadcf;
-  --accent: #63b3ff;
-  --accent-2: #8ef0ba;
-  --danger: #ff8080;
-  --border: #32415f;
-  --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  --gold: #d4af37;
+  --bg: #0a0a0a;
+  --card: #151515;
+  --accent: #3e2723;
+  --text: #f0f0f0;
+  --grey: #888;
+  --border: #444;
+  --neg: #ff4444;
+  --toolbar-bg: #111;
+  --toolbar-border: #2a2a2a;
+  --input-bg: #222;
+  --btn-bg: #333;
+  --btn-border: #444;
+  --th-bg: #252525;
+  --td-border: #222;
+  --surface-soft: #242424;
+  --shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 * { box-sizing: border-box; }
@@ -25,9 +32,12 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Inter, system-ui, sans-serif;
-  background: linear-gradient(180deg, #0c111a 0%, var(--bg) 100%);
+  padding: 0 10px 24px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
   color: var(--text);
+  line-height: 1.3;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button,
@@ -38,62 +48,133 @@ select {
 }
 
 button {
-  border: 1px solid var(--border);
-  background: var(--surface-soft);
-  color: var(--text);
-  border-radius: 0.75rem;
-  padding: 0.7rem 1rem;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--gold);
+  border-radius: 4px;
+  padding: 0.45rem 0.7rem;
   cursor: pointer;
+  transition: 0.15s ease;
 }
 
-button:hover { border-color: var(--accent); }
-button.ghost { background: transparent; }
+button:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+button.ghost {
+  background: transparent;
+}
 
 input,
 textarea,
 select {
   width: 100%;
-  background: #0f1523;
+  background: var(--input-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 0.7rem;
-  padding: 0.65rem 0.8rem;
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
 }
 
-textarea { resize: vertical; }
+textarea {
+  resize: vertical;
+}
 
-.app-shell {
-  width: min(1400px, 100%);
-  margin: 0 auto;
-  padding: 1.2rem;
+.sheet.app-shell {
+  width: min(1180px, 100%);
+  margin: 10px auto 0;
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
 }
 
 .topbar,
-.layout {
+.layout,
+.sidebar,
+.content,
+.module-host,
+.resource-grid,
+.entry-list,
+.module-list,
+.custom-module-box,
+.quick-summary dl {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .topbar {
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  margin-bottom: 1rem;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.75rem;
 }
 
-.eyebrow,
+.topbar-copy {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--grey);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16rem;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0.25rem;
+  color: var(--gold);
+  font-size: 1.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18rem;
+  text-align: left;
+}
+
 .subtitle {
   margin: 0;
-  color: var(--muted);
+  color: var(--grey);
+  font-size: 0.74rem;
 }
-
-h1, h2, h3, p { margin-top: 0; }
-h1 { margin-bottom: 0.35rem; }
 
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.45rem;
   justify-content: flex-end;
+}
+
+.toolbar button {
+  min-height: 32px;
+  font-size: 0.72rem;
+}
+
+.social-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 0.9rem;
+  margin-bottom: 0.95rem;
+  padding: 0.45rem 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--toolbar-border);
+  border-radius: 4px;
+  color: var(--grey);
+  font-size: 0.67rem;
+}
+
+.social-line b {
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .layout {
@@ -101,71 +182,100 @@ h1 { margin-bottom: 0.35rem; }
   align-items: start;
 }
 
-.sidebar,
-.content,
-.module-host {
-  display: grid;
-  gap: 1rem;
-}
-
 .panel,
 .module-card,
 .floating-card {
-  background: rgba(24, 32, 50, 0.92);
+  background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 1rem;
-  box-shadow: var(--shadow);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .panel,
-.module-card__body {
-  padding: 1rem;
+.module-card__body,
+.floating-card {
+  padding: 0.8rem;
 }
 
+.panel > h2:first-child,
 .panel-heading,
-.module-header,
-.inline-toolbar,
-.resource-controls {
+.module-header {
   display: flex;
-  gap: 0.75rem;
-  justify-content: space-between;
+  gap: 0.5rem;
   align-items: center;
+  justify-content: space-between;
+  margin: -0.8rem -0.8rem 0.8rem;
+  padding: 0.38rem 0.7rem;
+  background: var(--accent);
+  color: var(--gold);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.08rem;
+}
+
+.panel > h2:first-child {
+  display: block;
+}
+
+.panel-heading h2,
+.module-header h2 {
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.module-header .subtitle,
+.panel-heading .subtitle {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.58rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.module-header .field {
+  margin: 0;
 }
 
 .field {
   display: grid;
-  gap: 0.35rem;
-  margin-bottom: 0.85rem;
+  gap: 0.28rem;
+  margin-bottom: 0.75rem;
 }
 
 .field span,
 .module-item small,
-.hint {
-  color: var(--muted);
-}
-
-.module-list,
-.custom-module-box,
-.quick-summary dl,
-.resource-grid,
-.entry-list {
-  display: grid;
-  gap: 0.75rem;
+.hint,
+dt {
+  color: var(--grey);
 }
 
 .module-item {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.6rem;
   align-items: center;
-  background: var(--surface-alt);
+  background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 0.85rem;
-  padding: 0.75rem;
+  border-radius: 6px;
+  padding: 0.55rem 0.65rem;
+}
+
+.module-item strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.72rem;
+}
+
+.module-item small {
+  display: block;
+  font-size: 0.58rem;
+  margin-top: 0.12rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
 }
 
 .module-item input {
   width: auto;
-  transform: scale(1.1);
 }
 
 .quick-summary dl,
@@ -177,33 +287,34 @@ h1 { margin-bottom: 0.35rem; }
   display: flex;
   justify-content: space-between;
   gap: 0.75rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding-bottom: 0.45rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid var(--td-border);
+  font-size: 0.72rem;
+}
+
+.quick-summary dd {
+  margin: 0;
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .status-banner {
-  padding: 0.8rem 1rem;
-  border-radius: 0.85rem;
-  border: 1px solid var(--border);
-  background: rgba(99, 179, 255, 0.18);
+  padding: 0.7rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--text);
+  font-size: 0.72rem;
 }
 
 .status-banner[data-type="error"] {
-  background: rgba(255, 128, 128, 0.18);
-  border-color: rgba(255, 128, 128, 0.55);
-}
-
-.module-header {
-  margin-bottom: 0.9rem;
-}
-
-.module-header h2 {
-  margin-bottom: 0.15rem;
+  background: rgba(255, 68, 68, 0.1);
+  border-color: rgba(255, 68, 68, 0.35);
 }
 
 .module-grid {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.8rem;
 }
 
 .module-grid.cols-2 {
@@ -213,31 +324,50 @@ h1 { margin-bottom: 0.35rem; }
 .table-grid {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.75rem;
 }
 
 .table-grid th,
 .table-grid td {
   text-align: left;
-  padding: 0.65rem 0.45rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0.42rem 0.32rem;
+  border-bottom: 1px solid var(--td-border);
   vertical-align: top;
+}
+
+.table-grid th {
+  background: var(--th-bg);
+  color: var(--grey);
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  white-space: nowrap;
 }
 
 .table-grid input,
 .table-grid select {
   min-width: 72px;
+  padding: 0.34rem 0.45rem;
 }
 
 .entry-card {
-  background: var(--surface-alt);
+  background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 0.9rem;
-  padding: 0.9rem;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.entry-card h3 {
+  color: var(--gold);
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
 }
 
 .entry-card__grid {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.55rem;
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
@@ -251,29 +381,39 @@ h1 { margin-bottom: 0.35rem; }
 
 .modifier-list {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 .modifier-row {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.45rem;
   grid-template-columns: 1.5fr 100px auto;
 }
 
 .stat-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
+  gap: 0.35rem;
+  padding: 0.22rem 0.55rem;
   border-radius: 999px;
-  background: rgba(99, 179, 255, 0.15);
-  border: 1px solid rgba(99, 179, 255, 0.3);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  color: var(--gold);
+  font-size: 0.7rem;
 }
 
 .pill-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.45rem;
+}
+
+.inline-toolbar,
+.resource-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #floating-root {
@@ -287,7 +427,6 @@ h1 { margin-bottom: 0.35rem; }
 
 .floating-card {
   width: min(320px, calc(100vw - 2rem));
-  padding: 0.9rem;
 }
 
 .resource-grid {
@@ -295,8 +434,9 @@ h1 { margin-bottom: 0.35rem; }
 }
 
 .resource-value {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: var(--gold);
 }
 
 .resource-controls button {
@@ -308,7 +448,7 @@ h1 { margin-bottom: 0.35rem; }
 }
 
 .danger {
-  color: var(--danger);
+  color: var(--neg);
 }
 
 @media (max-width: 980px) {
@@ -332,17 +472,22 @@ h1 { margin-bottom: 0.35rem; }
   .entry-card__grid .full {
     grid-column: auto;
   }
+
+  .social-line {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
   </style>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="sheet app-shell">
     <header class="topbar">
-      <div>
-        <p class="eyebrow">HTML standalone modular</p>
+      <div class="topbar-copy">
+        <p class="eyebrow">GURPS 4ª edição · arquivo único</p>
         <h1>Singular v3</h1>
-        <p class="subtitle">Editor interativo de personagens GURPS com módulos dinâmicos.</p>
+        <p class="subtitle">Ficha standalone em arquivo único mais próxima da apresentação da versão de referência.</p>
       </div>
       <div class="toolbar">
         <button id="new-character-btn" type="button">Novo personagem</button>
@@ -351,6 +496,8 @@ h1 { margin-bottom: 0.35rem; }
         <input id="gcs-file-input" type="file" accept=".gcs,.json" hidden>
       </div>
     </header>
+
+    <div id="social-summary" class="social-line"></div>
 
     <div class="layout">
       <aside class="sidebar">
@@ -966,6 +1113,17 @@ h1 { margin-bottom: 0.35rem; }
     </dl>
   `;
   }
+  function renderSocialSummary(container, state) {
+    const derived = calculateDerived(state);
+    container.innerHTML = `
+    <span>Jogador: <b>${escapeHtml(state.meta.player || "\u2014")}</b></span>
+    <span>Campanha: <b>${escapeHtml(state.meta.campaign || "\u2014")}</b></span>
+    <span>Total: <b>${derived.points.spent}</b> pts</span>
+    <span>Livres: <b class="${derived.points.unspent < 0 ? "danger" : ""}">${formatSigned(derived.points.unspent)}</b></span>
+    <span>PV/PF: <b>${state.resources.hpCurrent}/${derived.points.hpMax} \xB7 ${state.resources.fpCurrent}/${derived.points.fpMax}</b></span>
+    <span>Carga: <b>${derived.encumbrance.active.name}</b></span>
+  `;
+  }
   function bindMetaFields(store) {
     const ids = ["name", "player", "campaign", "notes"];
     ids.forEach((key) => {
@@ -989,6 +1147,7 @@ h1 { margin-bottom: 0.35rem; }
     const floatingRoot = document.getElementById("floating-root");
     const notify = createNotifier(document.getElementById("status-banner"));
     const quickSummary = document.getElementById("quick-summary");
+    const socialSummary = document.getElementById("social-summary");
     const moduleList = document.getElementById("module-list");
     const persistedCustomModules = loadCustomModules();
     const allRegistry = [...registry, ...persistedCustomModules];
@@ -1092,9 +1251,11 @@ h1 { margin-bottom: 0.35rem; }
     store.subscribe((state) => {
       syncMeta(state);
       renderQuickSummary(quickSummary, state);
+      renderSocialSummary(socialSummary, state);
     });
     syncMeta(store.getState());
     renderQuickSummary(quickSummary, store.getState());
+    renderSocialSummary(socialSummary, store.getState());
     const defaults = loader.list().filter((item) => item.defaultActive !== false).map((item) => item.id);
     const preferred = loadStoredModulePrefs(defaults).filter((id) => loader.list().some((item) => item.id === id));
     const initial = preferred.length ? preferred : defaults;

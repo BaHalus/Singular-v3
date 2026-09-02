@@ -553,6 +553,17 @@
     </dl>
   `;
   }
+  function renderSocialSummary(container, state) {
+    const derived = calculateDerived(state);
+    container.innerHTML = `
+    <span>Jogador: <b>${escapeHtml(state.meta.player || "\u2014")}</b></span>
+    <span>Campanha: <b>${escapeHtml(state.meta.campaign || "\u2014")}</b></span>
+    <span>Total: <b>${derived.points.spent}</b> pts</span>
+    <span>Livres: <b class="${derived.points.unspent < 0 ? "danger" : ""}">${formatSigned(derived.points.unspent)}</b></span>
+    <span>PV/PF: <b>${state.resources.hpCurrent}/${derived.points.hpMax} \xB7 ${state.resources.fpCurrent}/${derived.points.fpMax}</b></span>
+    <span>Carga: <b>${derived.encumbrance.active.name}</b></span>
+  `;
+  }
   function bindMetaFields(store) {
     const ids = ["name", "player", "campaign", "notes"];
     ids.forEach((key) => {
@@ -576,6 +587,7 @@
     const floatingRoot = document.getElementById("floating-root");
     const notify = createNotifier(document.getElementById("status-banner"));
     const quickSummary = document.getElementById("quick-summary");
+    const socialSummary = document.getElementById("social-summary");
     const moduleList = document.getElementById("module-list");
     const persistedCustomModules = loadCustomModules();
     const allRegistry = [...registry, ...persistedCustomModules];
@@ -679,9 +691,11 @@
     store.subscribe((state) => {
       syncMeta(state);
       renderQuickSummary(quickSummary, state);
+      renderSocialSummary(socialSummary, state);
     });
     syncMeta(store.getState());
     renderQuickSummary(quickSummary, store.getState());
+    renderSocialSummary(socialSummary, store.getState());
     const defaults = loader.list().filter((item) => item.defaultActive !== false).map((item) => item.id);
     const preferred = loadStoredModulePrefs(defaults).filter((id) => loader.list().some((item) => item.id === id));
     const initial = preferred.length ? preferred : defaults;
