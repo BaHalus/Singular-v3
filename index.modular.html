@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +7,12 @@
   <link rel="stylesheet" href="./core/styles.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="sheet app-shell">
     <header class="topbar">
-      <div>
-        <p class="eyebrow">HTML standalone modular</p>
+      <div class="topbar-copy">
+        <p class="eyebrow">GURPS 4ª edição · referência modular</p>
         <h1>Singular v3</h1>
-        <p class="subtitle">Editor interativo de personagens GURPS com módulos dinâmicos.</p>
+        <p class="subtitle">Ficha modular inspirada na apresentação da versão de referência.</p>
       </div>
       <div class="toolbar">
         <button id="new-character-btn" type="button">Novo personagem</button>
@@ -21,6 +21,8 @@
         <input id="gcs-file-input" type="file" accept=".gcs,.json" hidden>
       </div>
     </header>
+
+    <div id="social-summary" class="social-line"></div>
 
     <div class="layout">
       <aside class="sidebar">
